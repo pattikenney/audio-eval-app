@@ -23,6 +23,7 @@ from utils.helpers import (
     get_active_config_path,
     set_active_config,
     list_config_files,
+    convert_config_to_relative_paths,
     CONFIG_PATH,
 )
 
@@ -158,17 +159,17 @@ def render_user_view(config: dict):
         random.shuffle(st.session_state.shuffled_agent_paths)
 
     shuffled = st.session_state.shuffled_agent_paths
-    labels = [f"Option {chr(65 + i)}" for i in range(len(shuffled))]
+    n_agents = len(shuffled)
+    labels = [f"Agent {chr(65 + i)}" for i in range(n_agents)]
 
     # Per-question selection state
     choice_key = f"choice_{idx}"
     if choice_key not in st.session_state:
         st.session_state[choice_key] = None
 
-    # Each agent: audio player first, then selection control directly underneath (easy to compare)
+    # Each agent: audio player first, then selection control directly underneath (4-way: Agent A, B, C, D)
     st.subheader(question_text)
-    n = len(shuffled)
-    cols = st.columns(n)
+    cols = st.columns(n_agents)
     for i, col in enumerate(cols):
         with col:
             agent_file = get_local_audio_path(shuffled[i])
@@ -295,23 +296,31 @@ def render_admin_view():
     eval_items = (config.get("eval_items") or []) + st.session_state.admin_extra_items
     if not eval_items:
         eval_items = [{"context_path": "", "agent_paths": []}]
-    st.write("Evaluation items (context_path + agent_paths, e.g. audio/file.wav):")
+    st.write(
+        "Evaluation items. You can use **absolute paths** (e.g. `/Users/you/Downloads/file.m4a`) "
+        "or relative (e.g. `audio/file.m4a`). Use **Convert to relative paths** below before pushing to Streamlit."
+    )
 
     new_items = []
     for i, item in enumerate(eval_items):
         with st.expander(f"Item {i + 1}", expanded=(i == 0)):
             ctx = st.text_input(
-                "Context (local path, e.g. audio/context_01.wav)",
+                "Context path (absolute or audio/...)",
                 value=item.get("context_path") or "",
                 key=f"ctx_{i}",
+                placeholder="/Users/you/Downloads/context.m4a or audio/context.m4a",
             )
             agents_str = st.text_input(
-                "Agent paths (comma-separated, e.g. audio/agent_a.wav, audio/agent_b.wav)",
+                "Agent paths (comma-separated; absolute or audio/...)",
                 value=",".join(item.get("agent_paths") or []),
                 key=f"agents_{i}",
+                placeholder="/path/to/agent1.mp3, audio/agent2.mp3",
             )
             agent_paths = [x.strip() for x in agents_str.split(",") if x.strip()]
-            new_items.append({"context_path": ctx, "agent_paths": agent_paths})
+            new_item = {"context_path": ctx, "agent_paths": agent_paths}
+            if item.get("id") is not None:
+                new_item["id"] = item["id"]
+            new_items.append(new_item)
 
     if st.button("Add another item"):
         st.session_state.admin_extra_items.append({"context_path": "", "agent_paths": []})
@@ -328,6 +337,34 @@ def render_admin_view():
             st.session_state.admin_extra_items = []
             where = get_active_config_path() or CONFIG_PATH
             st.success(f"Config saved to **{where.name}**.")
+            st.rerun()
+
+    st.divider()
+    st.subheader("Deployment: Convert to relative paths")
+    st.caption(
+        "If you used absolute paths above, click this to copy those files into **audio/** "
+        "and rewrite the config to use **audio/filename**. Then save; the config will be ready to push to Streamlit."
+    )
+    if st.button("Convert to relative paths (copy files to audio/ and update config)"):
+        cfg = {
+            "config_name": config_name,
+            "question_text": question_text,
+            "eval_items": new_items,
+        }
+        updated_cfg, messages = convert_config_to_relative_paths(cfg)
+        if not messages:
+            st.info("No absolute paths found; config already uses relative paths.")
+        else:
+            for msg in messages:
+                st.caption(msg)
+            config.clear()
+            config.update(updated_cfg)
+            save_config(updated_cfg)
+            st.session_state.admin_extra_items = []
+            st.success(
+                "Files copied to **audio/** and config updated with relative paths. "
+                "Save or Save as new config if needed, then push to GitHub/Streamlit."
+            )
             st.rerun()
 
     st.divider()

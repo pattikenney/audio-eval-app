@@ -1,147 +1,255 @@
-config_name: test2_human_agent_March9
-question_text: Which response sounds most appropriate?
+config_name: phase1_4way_36_full
+question_text: Which response sounds most appropriate to the context?
 eval_items:
-- context_path: audio/3a_rachel.m4a
-  agent_paths:
-  - audio/3ABF_249e23f1-ed87-4716-876a-49e012ee3f7a.mp3
-  - audio/3AZM_0660ecfb-9fb1-40f7-aa27-1d7fdbf5d477.mp3
-  - audio/3AM_41b40ede-b1e3-4e12-bb0c-3ae8b61413cc.mp3
-  - audio/3AS_ba7e5a8c-545f-4be9-84cd-999c95ec8523.mp3
-- context_path: audio/2a_rachel.m4a
-  agent_paths:
-  - audio/2ABF_efcafaae-6b7d-493e-89f8-13d120ec9697.mp3
-  - audio/2AZM_14591154-875d-4c6c-b366-e7c9a84aa9cd.mp3
-  - audio/2AM_f63d8da0-43f1-4cc8-9403-10e1618d044d.mp3
-  - audio/2AS_f0d4aab3-7060-47ec-bc42-7c6b096e85e9.mp3
-- context_path: audio/1a_rachel.m4a
-  agent_paths:
-  - audio/1ABF_08a0e59f-def7-4508-855f-5e0a55d56e47.mp3
-  - audio/1AZM_44749851-95f2-40e4-bd05-5231a0e98823
-  - audio/1AM_dab88fe8-a4d7-4f4d-9cd3-ea41c1c8ecaa.mp3
-  - audio/1AS_ef880bc9-cdb1-4fa2-9f09-6dadc4f214c9
-- context_path: audio/3c_rachel.m4a
-  agent_paths:
-  - audio/3CBF_dcbdf65a-6084-4e79-9b6f-e4ce2d256c9e.mp3
-  - audio/3CZM_682d8179-919c-4ce4-926c-0bb381c03350
-  - audio/3CM_57f65ec1-ba43-4eff-b4b3-02864b836728.mp3
-  - audio/3CS_785c5f88-c4f0-4a76-a9b5-58ae8eeaca65.mp3
-- context_path: audio/2c_rachel.m4a
-  agent_paths:
-  - audio/2CBF_ff1aacee-a6ae-4864-b52c-66cbad0072ee.mp3
-  - audio/2CZM_ c85baa54-6084-4981-83be-22ece65e9721.mp3
-  - audio/2CM_6bfa8be3-fc32-4c2a-8bd5-54ff74533f9a.mp3
-  - audio/2CS_b8d83bc3-7a72-484e-8e97-bb78ee43e971.mp3
-- context_path: audio/1c_rachel.m4a
-  agent_paths:
-  - audio/1CBF_24cc4879-26d6-44b3-9d08-fcc8047b2cc4.mp3
-  - audio/1CZM_b68f64a6-a305-4a89-9cab-4718bcb34c40.mp3
-  - audio/1CM_b7f74b7b-3011-4a09-af9f-057bfc85509e.mp3
-  - audio/1CS_19fa680f-3372-4ed8-9489-dd6d71a01383.mp3
-- context_path: audio/3d_rachel.m4a
-  agent_paths:
-  - audio/3DBF_5f0f3f5a-dadd-44d0-a2a5-1e20cddcbf07.mp3
-  - audio/3DZM_1530457a-31c0-4b53-b1c7-acf0f49b6e87.mp3
-  - audio/3DM_3e3ce073-2ca4-48f7-92a6-0f6f7de9f280.mp3
-  - audio/3DS_469c2f83-1356-4a41-85d6-470665370a94.mp3
-- context_path: audio/2d_rachel.m4a
-  agent_paths:
-  - audio/2DBF_2d5a59ac-62c0-4f19-b468-9cc3e5c5b525.mp3
-  - audio/2DZM_6310a938-17d0-4d93-a9c5-75c3a1afc635.mp3
-  - audio/2DM_ab7583af-282f-4d98-ac35-7ba75baca5fb.mp3
-  - audio/2DS_656c953d-3054-4961-94e3-65d3ce3520db.mp3
-- context_path: audio/1d_rachel.m4a
-  agent_paths:
-  - audio/1DBF_4748b3e1-e743-4c9d-9339-22c2b571cc76.mp3
-  - audio/1DZM_1227ca3e-0efc-4f74-bede-35ea4f4fd63e.mp3
-  - audio/1DM_4d167f9b-8fc3-4626-aabf-0d201a54e0cd.mp3
-  - audio/1DS_e648b642-a6ec-4a9d-b169-025ba9114c75.mp3
-- context_path: audio/3b_rachel.m4a
-  agent_paths:
-  - audio/3BBF_db1d4a29-f11a-4a6e-87d5-14cfd722c794.mp3
-  - audio/3BZM_2bd31d5c-b0b9-4da6-a8f9-f548f85674d6.mp3
-  - audio/3BM_c1dcb9e0-d4e6-45f8-a6ef-41af9ee18ca3.mp3
-  - audio/3BS_40dcdc43-de82-46d7-a75b-c960d444a1ef.mp3
-- context_path: audio/2b_rachel.m4a
-  agent_paths:
-  - audio/2BBF_b20d92c2-2431-4a9c-96bd-00e839f5e18b.mp3
-  - audio/2BZM_b118bf77-5300-4918-b614-4b0b65b413dc
-  - audio/2BM_8041acd1-ed4e-4d58-b4e2-ea191b70493b.mp3
-  - audio/2BS_cb561395-792e-4b08-a670-b413abb03b63
-- context_path: audio/1b_rachel.m4a
-  agent_paths:
-  - audio/1BBF_6aef2ae1-397c-4331-81a8-26a7cc0017ea.mp3
-  - audio/1BZM_dd521f14-f3d2-4a1c-88a1-213b4ae4de9c.mp3
-  - audio/1BM_4e7d47d8-dd9d-46e7-a2b4-e8ab110348b5.mp3
-  - audio/1BS_f83c6865-d2c7-4b60-a8c0-a8a9b35240f4.mp3
-- context_path: audio/1a_patti.m4a
-  agent_paths:
-  - audio/1ABF_08a0e59f-def7-4508-855f-5e0a55d56e47.mp3
-  - audio/1AZM_44749851-95f2-40e4-bd05-5231a0e98823
-  - audio/1AM_dab88fe8-a4d7-4f4d-9cd3-ea41c1c8ecaa.mp3
-  - audio/1AS_ef880bc9-cdb1-4fa2-9f09-6dadc4f214c9
-- context_path: audio/2a_patti.m4a
-  agent_paths:
-  - audio/2ABF_efcafaae-6b7d-493e-89f8-13d120ec9697.mp3
-  - audio/2AZM_14591154-875d-4c6c-b366-e7c9a84aa9cd.mp3
-  - audio/2AM_f63d8da0-43f1-4cc8-9403-10e1618d044d.mp3
-  - audio/2AS_f0d4aab3-7060-47ec-bc42-7c6b096e85e9.mp3
-- context_path: audio/3a_patti.m4a
-  agent_paths:
-  - audio/3ABF_249e23f1-ed87-4716-876a-49e012ee3f7a.mp3
-  - audio/3AZM_0660ecfb-9fb1-40f7-aa27-1d7fdbf5d477.mp3
-  - audio/3AM_41b40ede-b1e3-4e12-bb0c-3ae8b61413cc.mp3
-  - audio/3AS_ba7e5a8c-545f-4be9-84cd-999c95ec8523.mp3
-- context_path: audio/1b_patti.m4a
-  agent_paths:
-  - audio/1BBF_6aef2ae1-397c-4331-81a8-26a7cc0017ea.mp3
-  - audio/1BZM_dd521f14-f3d2-4a1c-88a1-213b4ae4de9c.mp3
-  - audio/1BM_4e7d47d8-dd9d-46e7-a2b4-e8ab110348b5.mp3
-  - audio/1BS_f83c6865-d2c7-4b60-a8c0-a8a9b35240f4.mp3
-- context_path: audio/2b_patti.m4a
-  agent_paths:
-  - audio/2BBF_b20d92c2-2431-4a9c-96bd-00e839f5e18b.mp3
-  - audio/2BZM_b118bf77-5300-4918-b614-4b0b65b413dc
-  - audio/2BM_8041acd1-ed4e-4d58-b4e2-ea191b70493b.mp3
-  - audio/2BS_cb561395-792e-4b08-a670-b413abb03b63.mp3
-- context_path: audio/3b_patti.m4a
-  agent_paths:
-  - audio/3BBF_db1d4a29-f11a-4a6e-87d5-14cfd722c794.mp3
-  - audio/3BZM_2bd31d5c-b0b9-4da6-a8f9-f548f85674d6.mp3
-  - audio/3BM_c1dcb9e0-d4e6-45f8-a6ef-41af9ee18ca3.mp3
-  - audio/3BS_40dcdc43-de82-46d7-a75b-c960d444a1ef.mp3
-- context_path: audio/1c_patti.m4a
-  agent_paths:
-  - audio/1CBF_24cc4879-26d6-44b3-9d08-fcc8047b2cc4.mp3
-  - audio/1CZM_b68f64a6-a305-4a89-9cab-4718bcb34c40.mp3
-  - audio/1CM_b7f74b7b-3011-4a09-af9f-057bfc85509e.mp3
-  - audio/1CS_19fa680f-3372-4ed8-9489-dd6d71a01383.mp3
-- context_path: audio/2c_patti.m4a
-  agent_paths:
-  - audio/2CBF_ff1aacee-a6ae-4864-b52c-66cbad0072ee.mp3
-  - audio/2CZM_ c85baa54-6084-4981-83be-22ece65e9721.mp3
-  - audio/2CM_6bfa8be3-fc32-4c2a-8bd5-54ff74533f9a.mp3
-  - audio/2CS_b8d83bc3-7a72-484e-8e97-bb78ee43e971.mp3
-- context_path: audio/3c_patti.m4a
-  agent_paths:
-  - audio/3CBF_dcbdf65a-6084-4e79-9b6f-e4ce2d256c9e.mp3
-  - audio/3CZM_682d8179-919c-4ce4-926c-0bb381c03350
-  - audio/3CM_57f65ec1-ba43-4eff-b4b3-02864b836728.mp3
-  - audio/3CS_785c5f88-c4f0-4a76-a9b5-58ae8eeaca65.mp3
-- context_path: audio/1d_patti.m4a
-  agent_paths:
-  - audio/1DBF_4748b3e1-e743-4c9d-9339-22c2b571cc76.mp3
-  - audio/1DZM_1227ca3e-0efc-4f74-bede-35ea4f4fd63e.mp3
-  - audio/1DM_4d167f9b-8fc3-4626-aabf-0d201a54e0cd.mp3
-  - audio/1DS_e648b642-a6ec-4a9d-b169-025ba9114c75.mp3
-- context_path: audio/2d_patti.m4a
-  agent_paths:
-  - audio/2DBF_2d5a59ac-62c0-4f19-b468-9cc3e5c5b525.mp3
-  - audio/2DZM_6310a938-17d0-4d93-a9c5-75c3a1afc635.mp3
-  - audio/2DM_ab7583af-282f-4d98-ac35-7ba75baca5fb.mp3
-  - audio/2DS_656c953d-3054-4961-94e3-65d3ce3520db.mp3
-- context_path: audio/3d_patti.m4a
-  agent_paths:
-  - audio/3DBF_5f0f3f5a-dadd-44d0-a2a5-1e20cddcbf07.mp3
-  - audio/3DZM_1530457a-31c0-4b53-b1c7-acf0f49b6e87.mp3
-  - audio/3DM_3e3ce073-2ca4-48f7-92a6-0f6f7de9f280.mp3
-  - audio/3DS_469c2f83-1356-4a41-85d6-470665370a94.mp3
+  - id: 1
+    context_path: audio/1b_patti.m4a
+    agent_paths:
+      - audio/1B_JustinM_output1.wav
+      - audio/1B_JustinBF_output1.wav
+      - audio/1B_JustinS_output1.wav
+      - audio/1B_JustinZM_output1.wav
+  - id: 2
+    context_path: audio/1b_patti.m4a
+    agent_paths:
+      - audio/1B_JustinM_output2.wav
+      - audio/1B_JustinBF_output2.wav
+      - audio/1B_JustinS_output2.wav
+      - audio/1B_JustinZM_output2.wav
+  - id: 3
+    context_path: audio/1b_patti.m4a
+    agent_paths:
+      - audio/1B_JustinM_output3.wav
+      - audio/1B_JustinBF_output3.wav
+      - audio/1B_JustinS_output3.wav
+      - audio/1B_JustinZM_output3.wav
+  - id: 4
+    context_path: audio/1b_patti.m4a
+    agent_paths:
+      - audio/1B_SherrinM_output1.wav
+      - audio/1B_SherrinBF_output1.wav
+      - audio/1B_SherrinS_output1.wav
+      - audio/1B_SherrinZM_output1.wav
+  - id: 5
+    context_path: audio/1b_patti.m4a
+    agent_paths:
+      - audio/1B_SherrinM_output2.wav
+      - audio/1B_SherrinBF_output2.wav
+      - audio/1B_SherrinS_output2.wav
+      - audio/1B_SherrinZM_output2.wav
+  - id: 6
+    context_path: audio/1b_patti.m4a
+    agent_paths:
+      - audio/1B_SherrinM_output3.wav
+      - audio/1B_SherrinBF_output3.wav
+      - audio/1B_SherrinS_output3.wav
+      - audio/1B_SherrinZM_output3.wav
+  - id: 7
+    context_path: audio/1b_patti.m4a
+    agent_paths:
+      - audio/1B_EricaM_output1.wav
+      - audio/1B_EricaBF_output1.wav
+      - audio/1B_EricaS_output1.wav
+      - audio/1B_EricaZM_output1.wav
+  - id: 8
+    context_path: audio/1b_patti.m4a
+    agent_paths:
+      - audio/1B_EricaM_output2.wav
+      - audio/1B_EricaBF_output2.wav
+      - audio/1B_EricaS_output2.wav
+      - audio/1B_EricaZM_output2.wav
+  - id: 9
+    context_path: audio/1b_patti.m4a
+    agent_paths:
+      - audio/1B_EricaM_output3.wav
+      - audio/1B_EricaBF_output3.wav
+      - audio/1B_EricaS_output3.wav
+      - audio/1B_EricaZM_output3.wav
+  - id: 10
+    context_path: audio/1c_rachel.m4a
+    agent_paths:
+      - audio/1C_JustinM_output1.wav
+      - audio/1C_JustinBF_output1.wav
+      - audio/1C_JustinS_output1.wav
+      - audio/1C_JustinZM_output1.wav
+  - id: 11
+    context_path: audio/1c_rachel.m4a
+    agent_paths:
+      - audio/1C_JustinM_output2.wav
+      - audio/1C_JustinBF_output2.wav
+      - audio/1C_JustinS_output2.wav
+      - audio/1C_JustinZM_output2.wav
+  - id: 12
+    context_path: audio/1c_rachel.m4a
+    agent_paths:
+      - audio/1C_JustinM_output3.wav
+      - audio/1C_JustinBF_output3.wav
+      - audio/1C_JustinS_output3.wav
+      - audio/1C_JustinZM_output3.wav
+  - id: 13
+    context_path: audio/1c_rachel.m4a
+    agent_paths:
+      - audio/1C_SherrinM_output1.wav
+      - audio/1C_SherrinBF_output1.wav
+      - audio/1C_SherrinS_output1.wav
+      - audio/1C_SherrinZM_output1.wav
+  - id: 14
+    context_path: audio/1c_rachel.m4a
+    agent_paths:
+      - audio/1C_SherrinM_output2.wav
+      - audio/1C_SherrinBF_output2.wav
+      - audio/1c_SherrinS_output2.wav
+      - audio/1C_SherrinZM_output2.wav
+  - id: 15
+    context_path: audio/1c_rachel.m4a
+    agent_paths:
+      - audio/1C_SherrinM_output3.wav
+      - audio/1C_SherrinBF_output3.wav
+      - audio/1C_SherrinS_output3.wav
+      - audio/1C_SherrinZM_output3.wav
+  - id: 16
+    context_path: audio/1c_rachel.m4a
+    agent_paths:
+      - audio/1C_EricaM_output1.wav
+      - audio/1C_EricaBF_output1.wav
+      - audio/1C_EricaS_output1.wav
+      - audio/1C_EricaZM_output1.wav
+  - id: 17
+    context_path: audio/1c_rachel.m4a
+    agent_paths:
+      - audio/1C_EricaM_output2.wav
+      - audio/1C_EricaBF_output2.wav
+      - audio/1C_EricaS_output2.wav
+      - audio/1C_EricaZM_output2.wav
+  - id: 18
+    context_path: audio/1c_rachel.m4a
+    agent_paths:
+      - audio/1C_EricaM_output3.wav
+      - audio/1C_EricaBF_output3.wav
+      - audio/1C_EricaS_output3.wav
+      - audio/1C_EricaZM_output3.wav
+  - id: 19
+    context_path: audio/1d_patti.m4a
+    agent_paths:
+      - audio/1D_JustinM_output1.wav
+      - audio/1D_JustinBF_output1.wav
+      - audio/1D_JustinS_output1.wav
+      - audio/1D_JustinZM_output1.wav
+  - id: 20
+    context_path: audio/1d_patti.m4a
+    agent_paths:
+      - audio/1D_JustinM_output2.wav
+      - audio/1D_JustinBF_output2.wav
+      - audio/1D_JustinS_output2.wav
+      - audio/1D_JustinZM_output2.wav
+  - id: 21
+    context_path: audio/1d_patti.m4a
+    agent_paths:
+      - audio/1D_JustinM_output3.wav
+      - audio/1D_JustinBF_output3.wav
+      - audio/1D_JustinS_output3.wav
+      - audio/1D_JustinZM_output3.wav
+  - id: 22
+    context_path: audio/1d_patti.m4a
+    agent_paths:
+      - audio/1D_SherrinM_output1.wav
+      - audio/1D_SherrinBF_output1.wav
+      - audio/1D_SherrinS_output1.wav
+      - audio/1D_SherrinZM_output1.wav
+  - id: 23
+    context_path: audio/1d_patti.m4a
+    agent_paths:
+      - audio/1D_SherrinM_output2.wav
+      - audio/1D_SherrrinBF_output2.wav
+      - audio/1D_SherrinS_output2.wav
+      - audio/1D_SherrinZM_output2.wav
+  - id: 24
+    context_path: audio/1d_patti.m4a
+    agent_paths:
+      - audio/1D_SherrinM_output3.wav
+      - audio/1D_SherrinBF_output3.wav
+      - audio/1D_SherrinS_output3.wav
+      - audio/1D_SherrinZM_output3.wav
+  - id: 25
+    context_path: audio/1d_patti.m4a
+    agent_paths:
+      - audio/1D_EricaM_output1.wav
+      - audio/1D_EricaBF_output1.wav
+      - audio/1D_EricaS_output1.wav
+      - audio/1D_EricaZM_output1.wav
+  - id: 26
+    context_path: audio/1d_patti.m4a
+    agent_paths:
+      - audio/1D_EricaM_output2.wav
+      - audio/1D_EricaBF_output2.wav
+      - audio/1D_EricaS_output2.wav
+      - audio/1D_EricaZM_output2.wav
+  - id: 27
+    context_path: audio/1d_patti.m4a
+    agent_paths:
+      - audio/1D_EricaM_output3.wav
+      - audio/1D_EricaBF_output3.wav
+      - audio/1D_EricaS_output3.wav
+      - audio/1D_EricaZM_output3.wav
+  - id: 28
+    context_path: audio/2b_rachel.m4a
+    agent_paths:
+      - audio/2B_JustinM_output1.wav
+      - audio/2B_JustinBF_output1.wav
+      - audio/2B_JustinS_output1.wav
+      - audio/2B_JustinZM_output1.wav
+  - id: 29
+    context_path: audio/2b_rachel.m4a
+    agent_paths:
+      - audio/2B_JustinM_output2.wav
+      - audio/2B_JustinBF_output2.wav
+      - audio/2B_JustinS_output2.wav
+      - audio/2B_JustinZM_output2.wav
+  - id: 30
+    context_path: audio/2b_rachel.m4a
+    agent_paths:
+      - audio/2B_JustinM_output3.wav
+      - audio/2B_JustinBF_output3.wav
+      - audio/2B_JustinS_output3.wav
+      - audio/2B_JustinZM_output3.wav
+  - id: 31
+    context_path: audio/2b_rachel.m4a
+    agent_paths:
+      - audio/2B_SherrinM_output1.wav
+      - audio/2B_SherrinBF_output1.wav
+      - audio/2B_SherrinS_output1.wav
+      - audio/2B_SherrinZM_output1.wav
+  - id: 32
+    context_path: audio/2b_rachel.m4a
+    agent_paths:
+      - audio/2B_SherrinM_output2.wav
+      - audio/2B_SherrinBF_output2.wav
+      - audio/2B_SherrinS_output2.wav
+      - audio/2B_SherrinZM_output2.wav
+  - id: 33
+    context_path: audio/2b_rachel.m4a
+    agent_paths:
+      - audio/2B_SherrinM_output3.wav
+      - audio/2B_SherrinBF_output3.wav
+      - audio/2B_SherrinS_output3.wav
+      - audio/2B_SherrinZM_output3.wav
+  - id: 34
+    context_path: audio/2b_rachel.m4a
+    agent_paths:
+      - audio/2B_EricaM_output1.wav
+      - audio/2B_EricaBF_output1.wav
+      - audio/2B_EricaS_output1.wav
+      - audio/2B_EricaZM_output1.wav
+  - id: 35
+    context_path: audio/2b_rachel.m4a
+    agent_paths:
+      - audio/2B_EricaM_output2.wav
+      - audio/2B_EricaBF_output2.wav
+      - audio/2B_EricaS_output2.wav
+      - audio/2B_EricaZM_output2.wav
+  - id: 36
+    context_path: audio/2b_rachel.m4a
+    agent_paths:
+      - audio/2B_EricaM_output3.wav
+      - audio/2B_EricaBF_output3.wav
+      - audio/2B_EricaS_output3.wav
+      - audio/2B_EricaZM_output3.wav

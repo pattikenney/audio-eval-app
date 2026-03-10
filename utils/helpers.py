@@ -1,5 +1,6 @@
 """Helper functions for the human evaluation app."""
 
+import shutil
 import yaml
 from pathlib import Path
 
@@ -8,6 +9,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 CONFIG_PATH = PROJECT_ROOT / "config.yaml"
 CONFIGS_DIR = PROJECT_ROOT / "configs"
 ACTIVE_FILE = CONFIGS_DIR / ".active"
+AUDIO_DIR = PROJECT_ROOT / "audio"
 
 
 def get_local_audio_path(relative_path: str) -> Path:
@@ -75,6 +77,46 @@ def save_config(config: dict) -> None:
     path = active_path if active_path is not None else CONFIG_PATH
     with open(path, "w") as f:
         yaml.dump(config, f, default_flow_style=False, sort_keys=False)
+
+
+def _is_absolute_path(path: str) -> bool:
+    """True if path looks like an absolute path (e.g. /Users/... or C:\)."""
+    p = (path or "").strip()
+    if not p:
+        return False
+    return Path(p).is_absolute()
+
+
+def convert_config_to_relative_paths(config: dict) -> tuple[dict, list[str]]:
+    """Copy any absolute-path audio files into audio/ and replace paths with audio/<basename>.
+    Returns (updated_config, list of log messages)."""
+    import copy
+    config = copy.deepcopy(config)
+    messages = []
+    AUDIO_DIR.mkdir(parents=True, exist_ok=True)
+
+    def process_path(path: str) -> str:
+        p = (path or "").strip()
+        if not p or not _is_absolute_path(p):
+            return p
+        src = Path(p).expanduser().resolve()
+        if not src.exists():
+            messages.append(f"Skip (not found): {p}")
+            return p
+        basename = src.name
+        dest = AUDIO_DIR / basename
+        if src != dest:
+            shutil.copy2(src, dest)
+            messages.append(f"Copied → audio/{basename}")
+        return f"audio/{basename}"
+
+    for item in config.get("eval_items") or []:
+        if item.get("context_path"):
+            item["context_path"] = process_path(item["context_path"])
+        for i, ap in enumerate(item.get("agent_paths") or []):
+            item["agent_paths"][i] = process_path(ap)
+
+    return config, messages
 
 
 def save_config_as(config: dict, filename: str) -> Path:
