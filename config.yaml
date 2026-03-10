@@ -109,7 +109,7 @@ eval_items:
   - id: 16
     context_path: audio/1c_rachel.m4a
     agent_paths:
-      - audio/1C_EricaM_output1.wav
+      - audio/1c_EricaM_output1.wav
       - audio/1C_EricaBF_output1.wav
       - audio/1C_EricaS_output1.wav
       - audio/1C_EricaZM_output1.wav
