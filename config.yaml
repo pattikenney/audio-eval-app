@@ -84,7 +84,7 @@ eval_items:
       - audio/1C_JustinM_output3.wav
       - audio/1C_JustinBF_output3.wav
       - audio/1C_JustinS_output3.wav
-      - audio/1C_JustinZM_output3.wav
+      - audio/1c_JustinZM_output3.wav
   - id: 13
     context_path: audio/1c_rachel.m4a
     agent_paths:
