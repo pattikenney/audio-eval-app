@@ -17,7 +17,12 @@ from streamlit_gsheets import GSheetsConnection
 from utils.helpers import (
     load_config,
     save_config,
+    save_config_as,
     get_local_audio_path,
+    get_active_config_filename,
+    get_active_config_path,
+    set_active_config,
+    list_config_files,
     CONFIG_PATH,
 )
 
@@ -222,14 +227,59 @@ def render_admin_view():
         st.session_state.admin_unlocked = False
         st.rerun()
 
-    try:
-        config = load_config()
-    except Exception as e:
-        st.error(f"Could not load config: {e}")
-        return
-
     if "admin_extra_items" not in st.session_state:
         st.session_state.admin_extra_items = []
+    if "admin_editing_blank" not in st.session_state:
+        st.session_state.admin_editing_blank = False
+
+    # Load config for the form: either blank (new) or from file
+    if st.session_state.admin_editing_blank:
+        config = {
+            "config_name": "",
+            "question_text": "Which response sounds most appropriate to the context?",
+            "eval_items": [],
+        }
+    else:
+        try:
+            config = load_config()
+        except Exception as e:
+            st.error(f"Could not load config: {e}")
+            return
+
+    # ---------- Config Manager ----------
+    st.subheader("Config Manager")
+    active_name = get_active_config_filename()
+    if st.session_state.admin_editing_blank:
+        st.caption("Editing **new blank config**. Save as new config when ready.")
+    elif active_name:
+        st.caption(f"Active config: **{active_name}** (used by the app and User view)")
+    else:
+        st.caption("Active config: *root config.yaml* (save a config below to use configs/)")
+
+    if st.button("Start new config"):
+        st.session_state.admin_editing_blank = True
+        st.session_state.admin_extra_items = []
+        st.success("Form cleared. Fill in your config and use 'Save as new config' at the bottom.")
+        st.rerun()
+
+    config_files = list_config_files()
+    if config_files:
+        selected = st.selectbox(
+            "Load a config (set as active so the app uses it)",
+            options=config_files,
+            index=(config_files.index(active_name) if active_name and active_name in config_files else 0),
+            key="admin_config_select",
+        )
+        if st.button("Set as active config"):
+            set_active_config(selected)
+            st.session_state.admin_editing_blank = False
+            st.success(f"Active config is now **{selected}**.")
+            st.rerun()
+    else:
+        st.caption("No config files in configs/ yet. Use 'Save as new config' at the bottom.")
+
+    st.divider()
+    st.subheader("Edit current config")
 
     config_name = st.text_input(
         "Config name (version / identifier for this config)",
@@ -268,15 +318,45 @@ def render_admin_view():
         st.rerun()
 
     if st.button("Save config"):
-        config["config_name"] = config_name
-        config["question_text"] = question_text
-        config["eval_items"] = new_items
-        save_config(config)
-        st.session_state.admin_extra_items = []
-        st.success("Config saved to config.yaml.")
-        st.rerun()
+        if st.session_state.admin_editing_blank:
+            st.warning("This is a new blank config. Use 'Save as new config' at the bottom to create a file first.")
+        else:
+            config["config_name"] = config_name
+            config["question_text"] = question_text
+            config["eval_items"] = new_items
+            save_config(config)
+            st.session_state.admin_extra_items = []
+            where = get_active_config_path() or CONFIG_PATH
+            st.success(f"Config saved to **{where.name}**.")
+            st.rerun()
 
-    st.caption(f"Config file: {CONFIG_PATH}")
+    st.divider()
+    st.subheader("Save as new config")
+    save_as_name = st.text_input(
+        "Filename for new config (config_name will be set to this name)",
+        placeholder="e.g. phase1_march9",
+        key="admin_save_as_name",
+    )
+    if st.button("Save as new config"):
+        if not (save_as_name or "").strip():
+            st.error("Enter a filename (e.g. phase1_march9).")
+        else:
+            try:
+                cfg = {
+                    "config_name": Path(save_as_name.strip()).stem,
+                    "question_text": question_text,
+                    "eval_items": new_items,
+                }
+                path = save_config_as(cfg, save_as_name.strip())
+                set_active_config(path.name)
+                st.session_state.admin_extra_items = []
+                st.session_state.admin_editing_blank = False
+                st.success(f"Saved as **{path.name}** and set as active. config_name = '{path.stem}' (tracked in Sheet).")
+                st.rerun()
+            except Exception as e:
+                st.error(str(e))
+
+    st.caption(f"Active config file: {get_active_config_path() or CONFIG_PATH}")
 
 
 def main():
@@ -286,7 +366,7 @@ def main():
     try:
         config = load_config()
     except FileNotFoundError:
-        st.error("config.yaml not found. Create it with question_text and eval_items.")
+        st.error("No config found. In Admin, save a config (Config Manager → Save as new config) or add config.yaml.")
         return
     except Exception as e:
         st.error(f"Error loading config: {e}")
