@@ -3,12 +3,14 @@
 import yaml
 from pathlib import Path
 
+# Project root: directory containing config.yaml (one level up from utils/)
 CONFIG_PATH = Path(__file__).resolve().parent.parent / "config.yaml"
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
 def get_local_audio_path(relative_path: str) -> Path:
-    """Resolve a config path (e.g. audio/my_file.wav) to an absolute path under the project."""
+    """Resolve a config path (e.g. audio/my_file.wav) to an absolute path under the project.
+    Uses Path(__file__) so it works when run from any cwd (e.g. Streamlit Cloud)."""
     path = (relative_path or "").strip()
     if not path:
         return PROJECT_ROOT
