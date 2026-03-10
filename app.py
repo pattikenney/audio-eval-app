@@ -397,8 +397,8 @@ def render_admin_view():
 
 
 def main():
-    st.set_page_config(page_title="Phase 1 Human Evaluation- Contextually Appropriate Voice Agent", layout="wide")
-    st.title("Phase 1 Human Evaluation- Contextually Appropriate Voice Agent")
+    st.set_page_config(page_title="Phase 2 Human Evaluation- Contextually Appropriate Voice Agent", layout="wide")
+    st.title("Phase 2 Human Evaluation- Contextually Appropriate Voice Agent")
 
     try:
         config = load_config()
