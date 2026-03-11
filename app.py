@@ -231,37 +231,40 @@ def render_user_view(config: dict):
             _, chosen_agent_path = st.session_state[choice_key]
 
     if item_type in ("sam_rating", "sam_full_emotional_rating"):
-        # Activation: one radio per column, synced via current_activation_score
+        # Activation: 7 columns (manikins only) + one horizontal radio so only one can be selected
         if "current_activation_score" not in st.session_state:
             st.session_state.current_activation_score = None
         st.subheader("Activation")
         st.markdown(
             """
             <style>
-            /* Sledgehammer: force small font and no overlap on SAM labels */
-            div[data-testid="stRadio"] label {
+            /* Single horizontal SAM radio: spread 7 options under manikins */
+            div[data-testid="stRadio"] > div {
+                display: flex !important;
+                width: 100% !important;
+            }
+            div[data-testid="stRadio"] > div > label {
+                flex: 1 1 0 !important;
+                min-width: 0;
+                text-align: center !important;
                 font-size: 0.6rem !important;
                 font-weight: 700 !important;
                 white-space: nowrap !important;
                 overflow: visible !important;
-                text-align: center !important;
-                margin-left: -5px !important;
-                margin-right: -5px !important;
-                line-height: 1.0 !important;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
             }
-            /* Tighten columns: zero gap on horizontal block */
+            div[data-testid="stRadio"] > label {
+                display: none !important;
+            }
             div[data-testid="stHorizontalBlock"] {
                 gap: 0px !important;
             }
-            /* Kill Streamlit's 1rem column padding */
             div[data-testid="column"] {
                 padding: 0px !important;
             }
-            /* SAM 7-column grid: center image and radio */
             div[data-testid="column"]:has(img) {
                 display: flex;
                 flex-direction: column;
@@ -283,33 +286,6 @@ def render_user_view(config: dict):
                 margin-left: auto;
                 margin-right: auto;
             }
-            div[data-testid="column"]:has(img) div[data-testid="stRadio"] {
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                padding-left: 0 !important;
-                padding-right: 0 !important;
-                margin-top: 0 !important;
-                padding-top: 0 !important;
-            }
-            div[data-testid="stRadio"] > div {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
-            }
-            /* Hide radio group label and placeholder (ghost) row */
-            div[data-testid="stRadio"] > label {
-                display: none !important;
-            }
-            div[data-testid="stRadio"] [role="radiogroup"] > label:first-of-type {
-                display: none !important;
-            }
-            div[data-testid="column"]:has(img) div[data-testid="stRadio"] > div > label:first-of-type {
-                display: none !important;
-            }
             </style>
             """,
             unsafe_allow_html=True,
@@ -329,21 +305,22 @@ def render_user_view(config: dict):
                 img_path = get_asset_path(f"activation_{i + 1}.png")
                 if img_path.exists():
                     st.image(str(img_path), use_container_width=True)
-                # One radio per column; index=None when unselected to avoid defaulting to ghost
-                act_options = [" ", activation_labels[i]]
-                act_sel = 1 if st.session_state.current_activation_score == i + 1 else None
-                act_choice = st.radio(
-                    " ",
-                    options=act_options,
-                    index=act_sel,
-                    key=f"act_{idx}_{i}",
-                    label_visibility="collapsed",
-                )
-                if act_choice == activation_labels[i]:
-                    st.session_state.current_activation_score = i + 1
+        act_index = None
+        if st.session_state.current_activation_score in range(1, 8):
+            act_index = st.session_state.current_activation_score - 1
+        selected_activation = st.radio(
+            "Activation",
+            options=activation_labels,
+            index=act_index,
+            key=f"activation_radio_{idx}",
+            horizontal=True,
+            label_visibility="collapsed",
+        )
+        if selected_activation is not None and selected_activation in activation_labels:
+            st.session_state.current_activation_score = activation_labels.index(selected_activation) + 1
 
     if item_type == "sam_full_emotional_rating":
-        # Dominance: one radio per column, synced via current_dominance_score
+        # Dominance: 7 columns (manikins only) + one horizontal radio
         if "current_dominance_score" not in st.session_state:
             st.session_state.current_dominance_score = None
         st.subheader("Dominance")
@@ -362,17 +339,19 @@ def render_user_view(config: dict):
                 img_path = get_asset_path(f"dominance_{i + 1}.png")
                 if img_path.exists():
                     st.image(str(img_path), use_container_width=True)
-                dom_options = [" ", dominance_labels[i]]
-                dom_sel = 1 if st.session_state.current_dominance_score == i + 1 else None
-                dom_choice = st.radio(
-                    " ",
-                    options=dom_options,
-                    index=dom_sel,
-                    key=f"dom_{idx}_{i}",
-                    label_visibility="collapsed",
-                )
-                if dom_choice == dominance_labels[i]:
-                    st.session_state.current_dominance_score = i + 1
+        dom_index = None
+        if st.session_state.current_dominance_score in range(1, 8):
+            dom_index = st.session_state.current_dominance_score - 1
+        selected_dominance = st.radio(
+            "Dominance",
+            options=dominance_labels,
+            index=dom_index,
+            key=f"dominance_radio_{idx}",
+            horizontal=True,
+            label_visibility="collapsed",
+        )
+        if selected_dominance is not None and selected_dominance in dominance_labels:
+            st.session_state.current_dominance_score = dominance_labels.index(selected_dominance) + 1
 
     can_submit = (
         (item_type == "sam_rating" and st.session_state.get("current_activation_score") in range(1, 8))
