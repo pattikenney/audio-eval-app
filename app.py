@@ -4,8 +4,10 @@ User view: progress, context audio, randomized agent choices, submit.
 Admin view: password-protected edit of question_text and eval_items in config.yaml.
 """
 
+import os
 import re
 import random
+import yaml
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, Union
@@ -15,7 +17,6 @@ import gspread
 from google.oauth2.service_account import Credentials
 
 from streamlit_gsheets import GSheetsConnection
-import yaml
 from utils.helpers import (
     load_config,
     save_config,
@@ -617,7 +618,7 @@ def render_admin_view():
 
 def _load_target_config():
     """Load phase3final.yaml from configs/ or project root; ignores .active."""
-    target_config = "phase3final.yaml"
+    target_config = "phase3final.yaml"  # explicit deployment config for hackathon
     project_root = CONFIG_PATH.parent
     path_in_configs = CONFIGS_DIR / target_config
     path_in_root = project_root / target_config
