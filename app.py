@@ -8,23 +8,27 @@ import re
 import random
 from datetime import datetime
 from pathlib import Path
+from typing import Optional, Union
 
 import streamlit as st
 import gspread
 from google.oauth2.service_account import Credentials
 
 from streamlit_gsheets import GSheetsConnection
+import yaml
 from utils.helpers import (
     load_config,
     save_config,
     save_config_as,
     get_local_audio_path,
+    get_asset_path,
     get_active_config_filename,
     get_active_config_path,
     set_active_config,
     list_config_files,
     convert_config_to_relative_paths,
     CONFIG_PATH,
+    CONFIGS_DIR,
 )
 
 # -----------------------------------------------------------------------------
@@ -63,6 +67,8 @@ def append_response_to_sheet(
     context_path: str,
     chosen_agent_path: str,
     config_name: str = "",
+    activation_score: Optional[Union[str, int]] = None,
+    dominance_score: Optional[Union[str, int]] = None,
 ) -> None:
     """Append one response row to the Google Sheet."""
     client = get_gspread_client()
@@ -70,32 +76,59 @@ def append_response_to_sheet(
     try:
         worksheet = spreadsheet.worksheet(RESPONSES_SHEET_NAME)
     except gspread.WorksheetNotFound:
-        worksheet = spreadsheet.add_worksheet(RESPONSES_SHEET_NAME, rows=1000, cols=10)
+        worksheet = spreadsheet.add_worksheet(RESPONSES_SHEET_NAME, rows=1000, cols=12)
         worksheet.append_row(
-            ["user_name", "timestamp", "config_name", "context_path", "chosen_agent_path"]
+            [
+                "user_name",
+                "timestamp",
+                "config_name",
+                "context_path",
+                "chosen_agent_path",
+                "activation_score (A1-A7)",
+                "dominance_score (D1-D7)",
+            ]
         )
+    # Format scale values: A1–A7 for activation, D1–D7 for dominance
+    act_cell = ""
+    if activation_score is not None and activation_score in range(1, 8):
+        act_cell = f"A{activation_score}"
+    dom_cell = ""
+    if dominance_score is not None and dominance_score in range(1, 8):
+        dom_cell = f"D{dominance_score}"
     row = [
         user_name,
         datetime.utcnow().isoformat() + "Z",
         config_name,
         context_path,
         chosen_agent_path,
+        act_cell,
+        dom_cell,
     ]
     worksheet.append_row(row)
 
 
 def init_session_state(eval_items: list):
-    """Initialize session state for user view. Randomize question order once per session."""
+    """Initialize session state for user view. Two-phase randomization: Group A (agent_comparison or missing type) then Group B (sam_rating, sam_full_emotional_rating), each group shuffled independently."""
     if "current_index" not in st.session_state:
         st.session_state.current_index = 0
     if "user_name" not in st.session_state:
         st.session_state.user_name = ""
     if "shuffled_agents_current" not in st.session_state:
         st.session_state.shuffled_agents_current = None
-    # Randomize question order once when user first joins (one order for the whole session)
-    if "question_order" not in st.session_state:
-        n = len(eval_items)
-        st.session_state.question_order = random.sample(range(n), n)
+    if "randomized_items" not in st.session_state:
+        # Group A: type is agent_comparison OR type key is missing (default to comparison)
+        group_a = [
+            i for i in range(len(eval_items))
+            if eval_items[i].get("type", "agent_comparison") == "agent_comparison"
+        ]
+        # Group B: type is sam_rating or sam_full_emotional_rating
+        group_b = [
+            i for i in range(len(eval_items))
+            if eval_items[i].get("type") in ("sam_rating", "sam_full_emotional_rating")
+        ]
+        random.shuffle(group_a)
+        random.shuffle(group_b)
+        st.session_state.randomized_items = group_a + group_b
 
 
 def render_user_view(config: dict):
@@ -109,7 +142,7 @@ def render_user_view(config: dict):
 
     init_session_state(eval_items)
     idx = st.session_state.current_index
-    question_order = st.session_state.question_order
+    question_order = st.session_state.randomized_items
 
     if idx >= len(eval_items):
         st.balloons()
@@ -119,13 +152,18 @@ def render_user_view(config: dict):
     # Show question at randomized position
     item_index = question_order[idx]
     item = eval_items[item_index]
+    item_type = item.get("type") or "agent_comparison"
     context_path = (item.get("context_path") or "").strip()
     agent_paths = [p for p in (item.get("agent_paths") or []) if (p or "").strip()]
 
-    if not context_path or not agent_paths:
-        st.warning(
-            f"Question {idx + 1} of {len(eval_items)} has missing context_path or agent_paths. Skip or fix in Admin."
-        )
+    if not context_path:
+        st.warning(f"Question {idx + 1} has missing context_path. Skip or fix in Admin.")
+        if st.button("Skip this item"):
+            st.session_state.current_index += 1
+            st.rerun()
+        return
+    if item_type == "agent_comparison" and not agent_paths:
+        st.warning(f"Question {idx + 1} has missing agent_paths. Skip or fix in Admin.")
         if st.button("Skip this item"):
             st.session_state.current_index += 1
             st.rerun()
@@ -152,57 +190,228 @@ def render_user_view(config: dict):
     else:
         st.warning(f"Audio file not found: {context_path}")
 
-    # Shuffle agent order once per question (so every user sees random order)
-    if st.session_state.shuffled_agents_current != idx:
-        st.session_state.shuffled_agents_current = idx
-        st.session_state.shuffled_agent_paths = agent_paths.copy()
-        random.shuffle(st.session_state.shuffled_agent_paths)
-
-    shuffled = st.session_state.shuffled_agent_paths
-    n_agents = len(shuffled)
-    labels = [f"Agent {chr(65 + i)}" for i in range(n_agents)]
-
-    # Per-question selection state
-    choice_key = f"choice_{idx}"
-    if choice_key not in st.session_state:
-        st.session_state[choice_key] = None
-
-    # Each agent: audio player first, then selection control directly underneath (4-way: Agent A, B, C, D)
-    st.subheader(question_text)
-    cols = st.columns(n_agents)
-    for i, col in enumerate(cols):
-        with col:
-            agent_file = get_local_audio_path(shuffled[i])
-            if agent_file.exists():
-                st.audio(str(agent_file))
-            else:
-                st.caption(f"File not found: {shuffled[i]}")
-            label = labels[i]
-            if st.button(f"Select {label}", key=f"sel_{idx}_{i}"):
-                st.session_state[choice_key] = (label, shuffled[i])
-                st.rerun()
-            if st.session_state[choice_key] and st.session_state[choice_key][0] == label:
-                st.caption("✓ Selected")
+    # Instruction text by question type (default type to agent_comparison when missing)
+    if item_type == "agent_comparison":
+        instruction_text = "Listen to the context, then choose the agent response that sounds most appropriate."
+    elif item_type == "sam_full_emotional_rating":
+        instruction_text = "Listen to the audio clip, then rate the speaker's level of Activation and Dominance using the scales below."
+    else:
+        instruction_text = "Listen to the audio clip, then rate the speaker's level of Activation using the scale below."
+    st.subheader(instruction_text)
 
     chosen_agent_path = None
-    if st.session_state[choice_key]:
-        _, chosen_agent_path = st.session_state[choice_key]
+    if item_type == "agent_comparison":
+        # Shuffle agent order once per question
+        if st.session_state.shuffled_agents_current != idx:
+            st.session_state.shuffled_agents_current = idx
+            st.session_state.shuffled_agent_paths = agent_paths.copy()
+            random.shuffle(st.session_state.shuffled_agent_paths)
+        shuffled = st.session_state.shuffled_agent_paths
+        n_agents = len(shuffled)
+        labels = [f"Agent {chr(65 + i)}" for i in range(n_agents)]
+        choice_key = f"choice_{idx}"
+        if choice_key not in st.session_state:
+            st.session_state[choice_key] = None
+        cols = st.columns(n_agents)
+        for i, col in enumerate(cols):
+            with col:
+                agent_file = get_local_audio_path(shuffled[i])
+                if agent_file.exists():
+                    st.audio(str(agent_file))
+                else:
+                    st.caption(f"File not found: {shuffled[i]}")
+                label = labels[i]
+                if st.button(f"Select {label}", key=f"sel_{idx}_{i}"):
+                    st.session_state[choice_key] = (label, shuffled[i])
+                    st.rerun()
+                if st.session_state[choice_key] and st.session_state[choice_key][0] == label:
+                    st.caption("✓ Selected")
+        if st.session_state[choice_key]:
+            _, chosen_agent_path = st.session_state[choice_key]
 
-    if not chosen_agent_path:
+    if item_type in ("sam_rating", "sam_full_emotional_rating"):
+        # Activation: one radio per column, synced via current_activation_score
+        if "current_activation_score" not in st.session_state:
+            st.session_state.current_activation_score = None
+        st.subheader("Activation")
+        st.markdown(
+            """
+            <style>
+            /* Sledgehammer: force small font and no overlap on SAM labels */
+            div[data-testid="stRadio"] label {
+                font-size: 0.6rem !important;
+                font-weight: 700 !important;
+                white-space: nowrap !important;
+                overflow: visible !important;
+                text-align: center !important;
+                margin-left: -5px !important;
+                margin-right: -5px !important;
+                line-height: 1.0 !important;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+            /* Tighten columns: zero gap on horizontal block */
+            div[data-testid="stHorizontalBlock"] {
+                gap: 0px !important;
+            }
+            /* Kill Streamlit's 1rem column padding */
+            div[data-testid="column"] {
+                padding: 0px !important;
+            }
+            /* SAM 7-column grid: center image and radio */
+            div[data-testid="column"]:has(img) {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+            }
+            div[data-testid="column"]:has(img) > div:first-child {
+                min-height: 100px;
+                display: flex;
+                align-items: flex-end;
+                justify-content: center;
+            }
+            div[data-testid="column"]:has(img) img {
+                max-height: 80px;
+                width: auto;
+                height: auto;
+                object-fit: contain;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            div[data-testid="column"]:has(img) div[data-testid="stRadio"] {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                margin-top: 0 !important;
+                padding-top: 0 !important;
+            }
+            div[data-testid="stRadio"] > div {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+            }
+            /* Hide radio group label and placeholder (ghost) row */
+            div[data-testid="stRadio"] > label {
+                display: none !important;
+            }
+            div[data-testid="stRadio"] [role="radiogroup"] > label:first-of-type {
+                display: none !important;
+            }
+            div[data-testid="column"]:has(img) div[data-testid="stRadio"] > div > label:first-of-type {
+                display: none !important;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
+        activation_labels = [
+            "1 (Very calm)",
+            "2 (calm)",
+            "3 (somewhat calm)",
+            "4 (neutral)",
+            "5 (somewhat active)",
+            "6 (active)",
+            "7 (Very active)",
+        ]
+        act_cols = st.columns(7)
+        for i, col in enumerate(act_cols):
+            with col:
+                img_path = get_asset_path(f"activation_{i + 1}.png")
+                if img_path.exists():
+                    st.image(str(img_path), use_container_width=True)
+                # One radio per column; index=None when unselected to avoid defaulting to ghost
+                act_options = [" ", activation_labels[i]]
+                act_sel = 1 if st.session_state.current_activation_score == i + 1 else None
+                act_choice = st.radio(
+                    " ",
+                    options=act_options,
+                    index=act_sel,
+                    key=f"act_{idx}_{i}",
+                    label_visibility="collapsed",
+                )
+                if act_choice == activation_labels[i]:
+                    st.session_state.current_activation_score = i + 1
+
+    if item_type == "sam_full_emotional_rating":
+        # Dominance: one radio per column, synced via current_dominance_score
+        if "current_dominance_score" not in st.session_state:
+            st.session_state.current_dominance_score = None
+        st.subheader("Dominance")
+        dominance_labels = [
+            "1 (Very weak)",
+            "2 (weak)",
+            "3 (somewhat weak)",
+            "4 (neutral)",
+            "5 (somewhat strong)",
+            "6 (strong)",
+            "7 (Very strong)",
+        ]
+        dom_cols = st.columns(7)
+        for i, col in enumerate(dom_cols):
+            with col:
+                img_path = get_asset_path(f"dominance_{i + 1}.png")
+                if img_path.exists():
+                    st.image(str(img_path), use_container_width=True)
+                dom_options = [" ", dominance_labels[i]]
+                dom_sel = 1 if st.session_state.current_dominance_score == i + 1 else None
+                dom_choice = st.radio(
+                    " ",
+                    options=dom_options,
+                    index=dom_sel,
+                    key=f"dom_{idx}_{i}",
+                    label_visibility="collapsed",
+                )
+                if dom_choice == dominance_labels[i]:
+                    st.session_state.current_dominance_score = i + 1
+
+    can_submit = (
+        (item_type == "sam_rating" and st.session_state.get("current_activation_score") in range(1, 8))
+        or (
+            item_type == "sam_full_emotional_rating"
+            and st.session_state.get("current_activation_score") in range(1, 8)
+            and st.session_state.get("current_dominance_score") in range(1, 8)
+        )
+        or (item_type == "agent_comparison" and chosen_agent_path is not None)
+    )
+    if item_type == "agent_comparison" and not chosen_agent_path:
         st.caption("Select an option above, then click Submit.")
 
     config_name = config.get("config_name") or ""
 
-    if st.button("Submit", disabled=(chosen_agent_path is None)):
-        if chosen_agent_path:
-            append_response_to_sheet(
-                st.session_state.user_name,
-                context_path,
-                chosen_agent_path,
-                config_name=config_name,
-            )
-            st.session_state.current_index += 1
-            st.rerun()
+    if st.button("Submit", disabled=not can_submit):
+        # Capture SAM scores before reset (used for sheet)
+        act_val = (
+            st.session_state.get("current_activation_score")
+            if item_type in ("sam_rating", "sam_full_emotional_rating")
+            else None
+        )
+        dom_val = (
+            st.session_state.get("current_dominance_score")
+            if item_type == "sam_full_emotional_rating"
+            else None
+        )
+        append_response_to_sheet(
+            st.session_state.user_name,
+            context_path,
+            chosen_agent_path or "",
+            config_name=config_name,
+            activation_score=act_val,
+            dominance_score=dom_val,
+        )
+        st.session_state.current_index += 1
+        # Reset SAM state for next question so radios don't persist
+        st.session_state.current_activation_score = None
+        st.session_state.current_dominance_score = None
+        st.rerun()
 
 
 def render_admin_view():
@@ -304,6 +513,16 @@ def render_admin_view():
     new_items = []
     for i, item in enumerate(eval_items):
         with st.expander(f"Item {i + 1}", expanded=(i == 0)):
+            item_type = item.get("type") or "agent_comparison"
+            _type_options = ["agent_comparison", "sam_rating", "sam_full_emotional_rating"]
+            _type_labels = {"agent_comparison": "Agent comparison", "sam_rating": "SAM rating", "sam_full_emotional_rating": "SAM full emotional rating"}
+            qtype = st.selectbox(
+                "Question type",
+                options=_type_options,
+                format_func=lambda x: _type_labels.get(x, x),
+                index=_type_options.index(item_type) if item_type in _type_options else 0,
+                key=f"type_{i}",
+            )
             ctx = st.text_input(
                 "Context path (absolute or audio/...)",
                 value=item.get("context_path") or "",
@@ -311,19 +530,19 @@ def render_admin_view():
                 placeholder="/Users/you/Downloads/context.m4a or audio/context.m4a",
             )
             agents_str = st.text_input(
-                "Agent paths (comma-separated; absolute or audio/...)",
+                "Agent paths (comma-separated; absolute or audio/...). Leave empty for SAM rating.",
                 value=",".join(item.get("agent_paths") or []),
                 key=f"agents_{i}",
                 placeholder="/path/to/agent1.mp3, audio/agent2.mp3",
             )
             agent_paths = [x.strip() for x in agents_str.split(",") if x.strip()]
-            new_item = {"context_path": ctx, "agent_paths": agent_paths}
+            new_item = {"context_path": ctx, "agent_paths": agent_paths, "type": qtype}
             if item.get("id") is not None:
                 new_item["id"] = item["id"]
             new_items.append(new_item)
 
     if st.button("Add another item"):
-        st.session_state.admin_extra_items.append({"context_path": "", "agent_paths": []})
+        st.session_state.admin_extra_items.append({"context_path": "", "agent_paths": [], "type": "agent_comparison"})
         st.rerun()
 
     if st.button("Save config"):
@@ -396,18 +615,39 @@ def render_admin_view():
     st.caption(f"Active config file: {get_active_config_path() or CONFIG_PATH}")
 
 
+def _load_target_config():
+    """Load phase3final.yaml from configs/ or project root; ignores .active."""
+    target_config = "phase3final.yaml"
+    project_root = CONFIG_PATH.parent
+    path_in_configs = CONFIGS_DIR / target_config
+    path_in_root = project_root / target_config
+    if path_in_configs.exists():
+        with open(path_in_configs, "r") as f:
+            return yaml.safe_load(f)
+    if path_in_root.exists():
+        with open(path_in_root, "r") as f:
+            return yaml.safe_load(f)
+    raise FileNotFoundError(
+        "Error: phase3final.yaml not found. Please ensure the file is in the root directory or the configs/ folder."
+    )
+
+
 def main():
-    st.set_page_config(page_title="Phase 2 Human Evaluation- Contextually Appropriate Voice Agent", layout="wide")
-    st.title("Phase 2 Human Evaluation- Contextually Appropriate Voice Agent")
+    st.set_page_config(page_title="Phase 3 Human Evaluation- Contextually Appropriate Voice Agent", layout="wide")
+    st.title("Phase 3 Human Evaluation- Contextually Appropriate Voice Agent")
 
     try:
-        config = load_config()
-    except FileNotFoundError:
-        st.error("No config found. In Admin, save a config (Config Manager → Save as new config) or add config.yaml.")
+        config = _load_target_config()
+    except FileNotFoundError as e:
+        st.error(str(e))
         return
     except Exception as e:
         st.error(f"Error loading config: {e}")
         return
+
+    # Debug: verify item count
+    eval_items = config.get("eval_items") or []
+    st.sidebar.write(f"Loaded {len(eval_items)} items")
 
     mode = st.sidebar.radio("Mode", ["User (evaluate)", "Admin"], key="mode")
 

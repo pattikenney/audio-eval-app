@@ -2,254 +2,157 @@ config_name: phase1_4way_36_full
 question_text: Which response sounds most appropriate to the context?
 eval_items:
   - id: 1
+  type: agent_comparison
     context_path: audio/1b_patti.m4a
     agent_paths:
-      - audio/1B_JustinM_output1.wav
+      - audio/1B_JustinM_output1_phase3.wav
       - audio/1B_JustinBF_output1.wav
       - audio/1B_JustinS_output1.wav
       - audio/1B_JustinZM_output1.wav
   - id: 2
+  type: agent_comparison
     context_path: audio/1b_patti.m4a
     agent_paths:
-      - audio/1B_JustinM_output2.wav
+      - audio/1B_JustinM_output2_phase3.wav
       - audio/1B_JustinBF_output2.wav
       - audio/1B_JustinS_output2.wav
       - audio/1B_JustinZM_output2.wav
   - id: 3
+  type: agent_comparison
     context_path: audio/1b_patti.m4a
     agent_paths:
-      - audio/1B_JustinM_output3.wav
+      - audio/1B_JustinM_output3_phase3.wav
       - audio/1B_JustinBF_output3.wav
       - audio/1B_JustinS_output3.wav
       - audio/1B_JustinZM_output3.wav
   - id: 4
-    context_path: audio/1b_patti.m4a
-    agent_paths:
-      - audio/1B_SherrinM_output1.wav
-      - audio/1B_SherrinBF_output1.wav
-      - audio/1B_SherrinS_output1.wav
-      - audio/1B_SherrinZM_output1.wav
-  - id: 5
-    context_path: audio/1b_patti.m4a
-    agent_paths:
-      - audio/1B_SherrinM_output2.wav
-      - audio/1B_SherrinBF_output2.wav
-      - audio/1B_SherrinS_output2.wav
-      - audio/1B_SherrinZM_output2.wav
-  - id: 6
-    context_path: audio/1b_patti.m4a
-    agent_paths:
-      - audio/1B_SherrinM_output3.wav
-      - audio/1B_SherrinBF_output3.wav
-      - audio/1B_SherrinS_output3.wav
-      - audio/1B_SherrinZM_output3.wav
-  - id: 7
-    context_path: audio/1b_patti.m4a
-    agent_paths:
-      - audio/1B_EricaM_output1.wav
-      - audio/1B_EricaBF_output1.wav
-      - audio/1B_EricaS_output1.wav
-      - audio/1B_EricaZM_output1.wav
-  - id: 8
-    context_path: audio/1b_patti.m4a
-    agent_paths:
-      - audio/1B_EricaM_output2.wav
-      - audio/1B_EricaBF_output2.wav
-      - audio/1B_EricaS_output2.wav
-      - audio/1B_EricaZM_output2.wav
-  - id: 9
-    context_path: audio/1b_patti.m4a
-    agent_paths:
-      - audio/1B_EricaM_output3.wav
-      - audio/1B_EricaBF_output3.wav
-      - audio/1B_EricaS_output3.wav
-      - audio/1B_EricaZM_output3.wav
-  - id: 10
-    context_path: audio/1c_rachel.m4a
-    agent_paths:
-      - audio/1C_JustinM_output1.wav
-      - audio/1C_JustinBF_output1.wav
-      - audio/1C_JustinS_output1.wav
-      - audio/1C_JustinZM_output1.wav
-  - id: 11
-    context_path: audio/1c_rachel.m4a
-    agent_paths:
-      - audio/1C_JustinM_output2.wav
-      - audio/1C_JustinBF_output2.wav
-      - audio/1C_JustinS_output2.wav
-      - audio/1C_JustinZM_output2.wav
-  - id: 12
-    context_path: audio/1c_rachel.m4a
-    agent_paths:
-      - audio/1C_JustinM_output3.wav
-      - audio/1C_JustinBF_output3.wav
-      - audio/1C_JustinS_output3.wav
-      - audio/1c_JustinZM_output3.wav
-  - id: 13
+  type: agent_comparison
     context_path: audio/1c_rachel.m4a
     agent_paths:
       - audio/1C_SherrinM_output1.wav
       - audio/1C_SherrinBF_output1.wav
-      - audio/1C_SherrinS_output1.wav
+      - audio/1C_SherrinS_output1_phase3.wav
       - audio/1C_SherrinZM_output1.wav
-  - id: 14
+  - id: 5
+  type: agent_comparison
     context_path: audio/1c_rachel.m4a
     agent_paths:
       - audio/1C_SherrinM_output2.wav
       - audio/1C_SherrinBF_output2.wav
-      - audio/1c_SherrinS_output2.wav
+      - audio/1c_SherrinS_output2_phase3.wav
       - audio/1C_SherrinZM_output2.wav
-  - id: 15
+  - id: 6
+  type: agent_comparison
     context_path: audio/1c_rachel.m4a
     agent_paths:
       - audio/1C_SherrinM_output3.wav
       - audio/1C_SherrinBF_output3.wav
-      - audio/1C_SherrinS_output3.wav
+      - audio/1C_SherrinS_output3_phase3.wav
       - audio/1C_SherrinZM_output3.wav
-  - id: 16
+  - id: 7
+  type: agent_comparison
     context_path: audio/1c_rachel.m4a
     agent_paths:
       - audio/1c_EricaM_output1.wav
       - audio/1C_EricaBF_output1.wav
-      - audio/1C_EricaS_output1.wav
+      - audio/1C_EricaS_output1_phase3.wav
       - audio/1C_EricaZM_output1.wav
-  - id: 17
+  - id: 8
+  type: agent_comparison
     context_path: audio/1c_rachel.m4a
     agent_paths:
       - audio/1C_EricaM_output2.wav
       - audio/1C_EricaBF_output2.wav
-      - audio/1C_EricaS_output2.wav
+      - audio/1C_EricaS_output2_phase3.wav
       - audio/1C_EricaZM_output2.wav
-  - id: 18
+  - id: 9
+  type: agent_comparison
     context_path: audio/1c_rachel.m4a
     agent_paths:
       - audio/1C_EricaM_output3.wav
       - audio/1C_EricaBF_output3.wav
-      - audio/1C_EricaS_output3.wav
+      - audio/1C_EricaS_output3_phase3.wav
       - audio/1C_EricaZM_output3.wav
-  - id: 19
-    context_path: audio/1d_patti.m4a
-    agent_paths:
-      - audio/1D_JustinM_output1.wav
-      - audio/1D_JustinBF_output1.wav
-      - audio/1D_JustinS_output1.wav
-      - audio/1D_JustinZM_output1.wav
-  - id: 20
-    context_path: audio/1d_patti.m4a
-    agent_paths:
-      - audio/1D_JustinM_output2.wav
-      - audio/1D_JustinBF_output2.wav
-      - audio/1D_JustinS_output2.wav
-      - audio/1D_JustinZM_output2.wav
-  - id: 21
-    context_path: audio/1d_patti.m4a
-    agent_paths:
-      - audio/1D_JustinM_output3.wav
-      - audio/1D_JustinBF_output3.wav
-      - audio/1D_JustinS_output3.wav
-      - audio/1D_JustinZM_output3.wav
-  - id: 22
+  - id: 10
+  type: agent_comparison
     context_path: audio/1d_patti.m4a
     agent_paths:
       - audio/1D_SherrinM_output1.wav
       - audio/1D_SherrinBF_output1.wav
       - audio/1D_SherrinS_output1.wav
-      - audio/1D_SherrinZM_output1.wav
-  - id: 23
+      - audio/1D_SherrinZM_output1_phase3.wav
+  - id: 11
+  type: agent_comparison
     context_path: audio/1d_patti.m4a
     agent_paths:
       - audio/1D_SherrinM_output2.wav
       - audio/1D_SherrrinBF_output2.wav
       - audio/1D_SherrinS_output2.wav
-      - audio/1D_SherrinZM_output2.wav
-  - id: 24
+      - audio/1D_SherrinZM_output2_phase3.wav
+  - id: 12
+  type: agent_comparison
     context_path: audio/1d_patti.m4a
     agent_paths:
       - audio/1D_SherrinM_output3.wav
       - audio/1D_SherrinBF_output3.wav
       - audio/1D_SherrinS_output3.wav
-      - audio/1D_SherrinZM_output3.wav
-  - id: 25
+      - audio/1D_SherrinZM_output3_phase3.wav
+  - id: 13
+  type: agent_comparison
     context_path: audio/1d_patti.m4a
     agent_paths:
       - audio/1D_EricaM_output1.wav
       - audio/1D_EricaBF_output1.wav
       - audio/1D_EricaS_output1.wav
-      - audio/1D_EricaZM_output1.wav
-  - id: 26
+      - audio/1D_EricaZM_output1_phase3.wav
+  - id: 14
+  type: agent_comparison
     context_path: audio/1d_patti.m4a
     agent_paths:
       - audio/1D_EricaM_output2.wav
       - audio/1D_EricaBF_output2.wav
       - audio/1D_EricaS_output2.wav
-      - audio/1D_EricaZM_output2.wav
-  - id: 27
+      - audio/1D_EricaZM_output2_phase3.wav
+  - id: 15
+  type: agent_comparison
     context_path: audio/1d_patti.m4a
     agent_paths:
       - audio/1D_EricaM_output3.wav
       - audio/1D_EricaBF_output3.wav
       - audio/1D_EricaS_output3.wav
-      - audio/1D_EricaZM_output3.wav
-  - id: 28
-    context_path: audio/2b_rachel.m4a
-    agent_paths:
-      - audio/2B_JustinM_output1.wav
-      - audio/2B_JustinBF_output1.wav
-      - audio/2B_JustinS_output1.wav
-      - audio/2B_JustinZM_output1.wav
-  - id: 29
-    context_path: audio/2b_rachel.m4a
-    agent_paths:
-      - audio/2B_JustinM_output2.wav
-      - audio/2B_JustinBF_output2.wav
-      - audio/2B_JustinS_output2.wav
-      - audio/2B_JustinZM_output2.wav
-  - id: 30
-    context_path: audio/2b_rachel.m4a
-    agent_paths:
-      - audio/2B_JustinM_output3.wav
-      - audio/2B_JustinBF_output3.wav
-      - audio/2B_JustinS_output3.wav
-      - audio/2B_JustinZM_output3.wav
-  - id: 31
-    context_path: audio/2b_rachel.m4a
-    agent_paths:
-      - audio/2B_SherrinM_output1.wav
-      - audio/2B_SherrinBF_output1.wav
-      - audio/2B_SherrinS_output1.wav
-      - audio/2B_SherrinZM_output1.wav
-  - id: 32
-    context_path: audio/2b_rachel.m4a
-    agent_paths:
-      - audio/2B_SherrinM_output2.wav
-      - audio/2B_SherrinBF_output2.wav
-      - audio/2B_SherrinS_output2.wav
-      - audio/2B_SherrinZM_output2.wav
-  - id: 33
-    context_path: audio/2b_rachel.m4a
-    agent_paths:
-      - audio/2B_SherrinM_output3.wav
-      - audio/2B_SherrinBF_output3.wav
-      - audio/2B_SherrinS_output3.wav
-      - audio/2B_SherrinZM_output3.wav
-  - id: 34
-    context_path: audio/2b_rachel.m4a
-    agent_paths:
-      - audio/2B_EricaM_output1.wav
-      - audio/2B_EricaBF_output1.wav
-      - audio/2B_EricaS_output1.wav
-      - audio/2B_EricaZM_output1.wav
-  - id: 35
-    context_path: audio/2b_rachel.m4a
-    agent_paths:
-      - audio/2B_EricaM_output2.wav
-      - audio/2B_EricaBF_output2.wav
-      - audio/2B_EricaS_output2.wav
-      - audio/2B_EricaZM_output2.wav
-  - id: 36
-    context_path: audio/2b_rachel.m4a
-    agent_paths:
-      - audio/2B_EricaM_output3.wav
-      - audio/2B_EricaBF_output3.wav
-      - audio/2B_EricaS_output3.wav
-      - audio/2B_EricaZM_output3.wav
+      - audio/1D_EricaZM_output3_phase3.wav
+      - id: 16
+    type: sam_full_emotional_rating
+    context_path: audio/Erica_S_conditioning_phase3.mp3
+    agent_paths: []
+    - id: 17
+    type: sam_full_emotional_rating
+    context_path: audio/erica_ZM_conditioning_phase3.mp3
+    agent_paths: []  # L
+    - id: 18
+    type: sam_full_emotional_rating
+    context_path: audio/Sherrin_S_conditioning_phase3.mp3
+    agent_paths: []  # L
+    - id: 19
+    type: sam_full_emotional_rating
+    context_path: audio/Sherrin_ZM_conditioning_phase3.mp3
+    agent_paths: []  
+    - id: 20
+    type: sam_full_emotional_rating
+    context_path: audio/Justin_M_conditioning_phase3.mp3
+    agent_paths: []  # L
+    - id: 21
+    type: sam_full_emotional_rating
+    context_path: /Users/patriciakenney/Downloads/Justin_humaneval_agentresponses_motivator/1BM_4e7d47d8-dd9d-46e7-a2b4-e8ab110348b5.mp3
+    agent_paths: []  # L
+    - id: 22
+    type: sam_full_emotional_rating
+    context_path: /Users/patriciakenney/Downloads/Justin_humaneval_agentresponses_bestfriend/2BBF_b20d92c2-2431-4a9c-96bd-00e839f5e18b.mp3
+    agent_paths: []  # L
+    - id: 23
+    type: sam_full_emotional_rating
+    context_path: /Users/patriciakenney/Downloads/Justin_humaneval_agentresponses_sage/3AS_ba7e5a8c-545f-4be9-84cd-999c95ec8523.mp3
+    agent_paths: []  # L# L
+    type: sam_full_emotional_rating
+    context_path: /Users/patriciakenney/Downloads/Justin_humaneval_agentresponses_monk/1DZM_1227ca3e-0efc-4f74-bede-35ea4f4fd63e.mp3
+    agent_paths: []  #   # Leave this empty for SAM items

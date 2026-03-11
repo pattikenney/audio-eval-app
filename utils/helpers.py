@@ -3,6 +3,7 @@
 import shutil
 import yaml
 from pathlib import Path
+from typing import Optional
 
 # Project root: directory containing config.yaml (one level up from utils/)
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -10,6 +11,7 @@ CONFIG_PATH = PROJECT_ROOT / "config.yaml"
 CONFIGS_DIR = PROJECT_ROOT / "configs"
 ACTIVE_FILE = CONFIGS_DIR / ".active"
 AUDIO_DIR = PROJECT_ROOT / "audio"
+ASSETS_DIR = PROJECT_ROOT / "assets"
 
 
 def get_local_audio_path(relative_path: str) -> Path:
@@ -21,11 +23,16 @@ def get_local_audio_path(relative_path: str) -> Path:
     return (PROJECT_ROOT / path).resolve()
 
 
+def get_asset_path(filename: str) -> Path:
+    """Resolve an asset filename (e.g. activation_1.png, dominance_1.png) to absolute path under assets/."""
+    return (ASSETS_DIR / (filename or "").strip()).resolve()
+
+
 def _ensure_configs_dir() -> None:
     CONFIGS_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def get_active_config_filename() -> str | None:
+def get_active_config_filename() -> Optional[str]:
     """Return the active config filename (e.g. phase1.yaml) or None if not set."""
     if not ACTIVE_FILE.exists():
         return None
@@ -33,7 +40,7 @@ def get_active_config_filename() -> str | None:
     return name if name else None
 
 
-def get_active_config_path() -> Path | None:
+def get_active_config_path() -> Optional[Path]:
     """Return full path to the active config file, or None."""
     name = get_active_config_filename()
     if not name:

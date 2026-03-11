@@ -1,0 +1,23 @@
+config_name: phase3
+question_text: Which response sounds most appropriate to the context?
+eval_items:
+- context_path: audio/1b_patti.m4a
+  agent_paths:
+  - audio/1B_JustinM_output1.wav
+  - audio/1B_JustinBF_output1.wav
+  - audio/1B_JustinS_output1.wav
+  - audio/1B_JustinZM_output1.wav
+  type: agent_comparison
+- context_path: /Users/patriciakenney/Documents/Erica_S_conditioning_phase3.mp3
+  agent_paths: []
+  type: sam_full_emotional_rating
+- context_path: audio/1b_patti.m4a
+  agent_paths:
+  - audio/1B_JustinM_output1.wav
+  - audio/1B_JustinBF_output1.wav
+  - audio/1B_JustinS_output1.wav
+  - audio/1B_JustinZM_output1.wav
+  type: agent_comparison
+- context_path: audio/1b_patti.m4a
+  agent_paths: []
+  type: sam_full_emotional_rating
