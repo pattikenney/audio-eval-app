@@ -1,0 +1,87 @@
+config_name: phase4
+question_text: Which response sounds most appropriate to the context?
+eval_items:
+- context_path: audio/1c_rachel.m4a
+  agent_paths:
+  - audio/1C_EricaS_output1_phase3.wav
+  - audio/1C_EricaM_phase4.mp3
+  - audio/1C_EricaZM_phase4.mp3
+  - audio/1C_EricaBF_phase4.mp3
+  type: agent_comparison
+- context_path: audio/1c_rachel.m4a
+  agent_paths:
+  - audio/1C_EricaS_output2_phase3.wav
+  - audio/1C_EricaM_phase4.mp3
+  - audio/1C_EricaZM_phase4.mp3
+  - audio/1C_EricaBF_phase4.mp3
+  type: agent_comparison
+- context_path: audio/1c_rachel.m4a
+  agent_paths:
+  - audio/1C_EricaS_output3_phase3.wav
+  - audio/1C_EricaM_phase4.mp3
+  - audio/1C_EricaZM_phase4.mp3
+  - audio/1C_EricaBF_phase4.mp3
+  type: agent_comparison
+- context_path: audio/1c_rachel.m4a
+  agent_paths:
+  - audio/1C_EricaM_phase4.mp3
+  - audio/1C_EricaZM_phase4.mp3
+  - audio/1C_EricaBF_phase4.mp3
+  - audio/1C_EricaS_phase4.mp3
+  type: agent_comparison
+- context_path: audio/1d_patti.m4a
+  agent_paths:
+  - audio/1D_EricaZM_phase4.mp3
+  - audio/1D_EricaM_phase4.mp3
+  - audio/1D_EricaS_phase4.mp3
+  - audio/1D_EricaBF_phase4.mp3
+  type: agent_comparison
+- context_path: audio/1d_patti.m4a
+  agent_paths:
+  - audio/1D_EricaZM_output1_phase3.wav
+  - audio/1D_EricaM_phase4.mp3
+  - audio/1D_EricaS_phase4.mp3
+  - audio/1D_EricaBF_phase4.mp3
+  type: agent_comparison
+- context_path: audio/1d_patti.m4a
+  agent_paths:
+  - audio/1D_EricaZM_output2_phase3.wav
+  - audio/1D_EricaM_phase4.mp3
+  - audio/1D_EricaS_phase4.mp3
+  - audio/1D_EricaBF_phase4.mp3
+  type: agent_comparison
+- context_path: audio/1d_patti.m4a
+  agent_paths:
+  - audio/1D_EricaZM_output3_phase3.wav
+  - audio/1D_EricaM_phase4.mp3
+  - audio/1D_EricaS_phase4.mp3
+  - audio/1D_EricaBF_phase4.mp3
+  type: agent_comparison
+- context_path: audio/2b_rachel.m4a
+  agent_paths:
+  - audio/2B_SherrinM_output1.wav
+  - audio/2B_SherrinS_phase4.wav
+  - audio/2B_SherrinZM_phase4.wav
+  - audio/2B_SherrinBF_phase4.wav
+  type: agent_comparison
+- context_path: audio/2b_rachel.m4a
+  agent_paths:
+  - audio/2B_SherrinM_output2.wav
+  - audio/2B_SherrinS_phase4.wav
+  - audio/2B_SherrinZM_phase4.wav
+  - audio/2B_SherrinBF_phase4.wav
+  type: agent_comparison
+- context_path: audio/2b_rachel.m4a
+  agent_paths:
+  - audio/2B_SherrinM_output3.wav
+  - audio/2B_SherrinS_phase4.wav
+  - audio/2B_SherrinZM_phase4.wav
+  - audio/2B_SherrinBF_phase4.wav
+  type: agent_comparison
+- context_path: audio/2b_rachel.m4a
+  agent_paths:
+  - audio/2B_SherrinS_phase4.wav
+  - audio/2B_SherrinZM_phase4.wav
+  - audio/2B_SherrinBF_phase4.wav
+  - audio/2B_SherrinM_phase4.wav
+  type: agent_comparison

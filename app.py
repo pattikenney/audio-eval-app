@@ -110,26 +110,30 @@ def append_response_to_sheet(
 
 def init_session_state(eval_items: list):
     """Initialize session state for user view. Two-phase randomization: Group A (agent_comparison or missing type) then Group B (sam_rating, sam_full_emotional_rating), each group shuffled independently."""
+    n = len(eval_items)
     if "current_index" not in st.session_state:
         st.session_state.current_index = 0
     if "user_name" not in st.session_state:
         st.session_state.user_name = ""
     if "shuffled_agents_current" not in st.session_state:
         st.session_state.shuffled_agents_current = None
-    if "randomized_items" not in st.session_state:
+    # Rebuild randomized_items if missing or if config changed (different number of items)
+    if "randomized_items" not in st.session_state or len(st.session_state.randomized_items) != n:
         # Group A: type is agent_comparison OR type key is missing (default to comparison)
         group_a = [
-            i for i in range(len(eval_items))
+            i for i in range(n)
             if eval_items[i].get("type", "agent_comparison") == "agent_comparison"
         ]
         # Group B: type is sam_rating or sam_full_emotional_rating
         group_b = [
-            i for i in range(len(eval_items))
+            i for i in range(n)
             if eval_items[i].get("type") in ("sam_rating", "sam_full_emotional_rating")
         ]
         random.shuffle(group_a)
         random.shuffle(group_b)
         st.session_state.randomized_items = group_a + group_b
+        # Reset to first question when config changes
+        st.session_state.current_index = 0
 
 
 def render_user_view(config: dict):
@@ -145,13 +149,20 @@ def render_user_view(config: dict):
     idx = st.session_state.current_index
     question_order = st.session_state.randomized_items
 
-    if idx >= len(eval_items):
+    if idx >= len(eval_items) or idx >= len(question_order):
         st.balloons()
         st.success("Thank you! You have completed all questions.")
         return
 
     # Show question at randomized position
     item_index = question_order[idx]
+    if item_index < 0 or item_index >= len(eval_items):
+        # Config changed; force rebuild on next run
+        if "randomized_items" in st.session_state:
+            del st.session_state.randomized_items
+        st.session_state.current_index = 0
+        st.rerun()
+        return
     item = eval_items[item_index]
     item_type = item.get("type") or "agent_comparison"
     context_path = (item.get("context_path") or "").strip()
@@ -596,8 +607,8 @@ def render_admin_view():
 
 
 def _load_target_config():
-    """Load phase3final.yaml from configs/ or project root; ignores .active."""
-    target_config = "phase3final.yaml"  # explicit deployment config for hackathon
+    """Load phase4.yaml from configs/ or project root; ignores .active."""
+    target_config = "phase4.yaml"
     project_root = CONFIG_PATH.parent
     path_in_configs = CONFIGS_DIR / target_config
     path_in_root = project_root / target_config
@@ -608,13 +619,13 @@ def _load_target_config():
         with open(path_in_root, "r") as f:
             return yaml.safe_load(f)
     raise FileNotFoundError(
-        "Error: phase3final.yaml not found. Please ensure the file is in the root directory or the configs/ folder."
+        "Error: phase4.yaml not found. Please ensure the file is in the root directory or the configs/ folder."
     )
 
 
 def main():
-    st.set_page_config(page_title="Phase 3 Human Evaluation- Contextually Appropriate Voice Agent", layout="wide")
-    st.title("Phase 3 Human Evaluation- Contextually Appropriate Voice Agent")
+    st.set_page_config(page_title="Phase 4 Human Evaluation- Contextually Appropriate Voice Agent", layout="wide")
+    st.title("Phase 4 Human Evaluation- Contextually Appropriate Voice Agent")
 
     try:
         config = _load_target_config()
