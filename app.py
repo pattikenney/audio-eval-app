@@ -70,14 +70,15 @@ def append_response_to_sheet(
     config_name: str = "",
     activation_score: Optional[Union[str, int]] = None,
     dominance_score: Optional[Union[str, int]] = None,
+    agent_paths: Optional[list] = None,
 ) -> None:
-    """Append one response row to the Google Sheet."""
+    """Append one response row to the Google Sheet. agent_paths = list of 4 paths shown (A–D order) for comparison questions."""
     client = get_gspread_client()
     spreadsheet = client.open_by_key(get_spreadsheet_id())
     try:
         worksheet = spreadsheet.worksheet(RESPONSES_SHEET_NAME)
     except gspread.WorksheetNotFound:
-        worksheet = spreadsheet.add_worksheet(RESPONSES_SHEET_NAME, rows=1000, cols=12)
+        worksheet = spreadsheet.add_worksheet(RESPONSES_SHEET_NAME, rows=1000, cols=16)
         worksheet.append_row(
             [
                 "user_name",
@@ -87,6 +88,10 @@ def append_response_to_sheet(
                 "chosen_agent_path",
                 "activation_score (A1-A7)",
                 "dominance_score (D1-D7)",
+                "agent_path_1",
+                "agent_path_2",
+                "agent_path_3",
+                "agent_path_4",
             ]
         )
     # Format scale values: A1–A7 for activation, D1–D7 for dominance
@@ -96,6 +101,8 @@ def append_response_to_sheet(
     dom_cell = ""
     if dominance_score is not None and dominance_score in range(1, 8):
         dom_cell = f"D{dominance_score}"
+    paths = agent_paths or []
+    path_cells = [paths[i] if i < len(paths) else "" for i in range(4)]
     row = [
         user_name,
         datetime.utcnow().isoformat() + "Z",
@@ -104,6 +111,10 @@ def append_response_to_sheet(
         chosen_agent_path,
         act_cell,
         dom_cell,
+        path_cells[0],
+        path_cells[1],
+        path_cells[2],
+        path_cells[3],
     ]
     worksheet.append_row(row)
 
@@ -390,6 +401,12 @@ def render_user_view(config: dict):
             if item_type == "sam_full_emotional_rating"
             else None
         )
+        # For agent_comparison, pass the 4 paths in display order (Agent A–D)
+        agent_paths_list = (
+            list(st.session_state.get("shuffled_agent_paths") or [])
+            if item_type == "agent_comparison"
+            else []
+        )
         append_response_to_sheet(
             st.session_state.user_name,
             context_path,
@@ -397,6 +414,7 @@ def render_user_view(config: dict):
             config_name=config_name,
             activation_score=act_val,
             dominance_score=dom_val,
+            agent_paths=agent_paths_list if len(agent_paths_list) == 4 else [],
         )
         st.session_state.current_index += 1
         # Reset SAM state for next question so radios don't persist
